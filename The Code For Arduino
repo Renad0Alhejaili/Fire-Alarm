@@ -6,7 +6,7 @@
 #define LED_PIN 7
 #define SMOKE_PIN A0
 
-#define DHT_TYPE DHT11  // Use DHT11 sensor, change to DHT22 if needed
+#define DHT_TYPE DHT11  
 
 DHT dht(DHT_PIN, DHT_TYPE);  // Initialize DHT sensor
 int smoke_value = 0;
