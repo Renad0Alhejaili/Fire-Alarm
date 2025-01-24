@@ -1,17 +1,3 @@
-const int ledpin=13; // ledpin,flamepin and buzpin are not changed throughout the process
-const int ledpin_smoke = 12; // LED for smoke detection
-const int smokepin = A1;    // Smoke sensor pin
-const int buzpin = 11;      // Buzzer pin
-const int threshold_smoke = 300; // Threshold value for smoke sensor
-int smokesensvalue = 0;      // Initialize smoke sensor reading
-void setup() {
-  pinMode(ledpin_smoke, OUTPUT);
-  pinMode(smokepin, INPUT);
-  pinMode(buzpin, OUTPUT);
-}
-void loop() {
- smokesensvalue = getAverageReading(smokepin); // Reads averaged data from smoke sensor
-
  // Check smoke sensor
   if (smokesensvalue >= threshold_smoke) { // If smoke is detected
     digitalWrite(ledpin_smoke, HIGH); // Turn on smoke LED
