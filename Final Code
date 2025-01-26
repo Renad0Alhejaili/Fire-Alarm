@@ -1,0 +1,60 @@
+const int ledpin = 12;       // LED for detection (common for both smoke and flame)
+const int flamepin = A2;     // Flame sensor pin
+const int smokepin = A1;     // Smoke sensor pin
+const int buzpin = 9;       // Buzzer pin
+const int threshold_flame = 200; // Threshold value for flame sensor
+const int threshold_smoke = 300; // Threshold value for smoke sensor
+const int sample_count = 10;     // Number of samples for averaging
+int flamesensvalue = 0;      // Initialize flame sensor reading
+int smokesensvalue = 0;      // Initialize smoke sensor reading
+
+void setup() {
+  pinMode(ledpin, OUTPUT);   // Set LED as output
+  pinMode(flamepin, INPUT);  // Set flame sensor as input
+  pinMode(smokepin, INPUT);  // Set smoke sensor as input
+  pinMode(buzpin, OUTPUT);   // Set buzzer as output
+
+  // Ensure everything starts turned off
+  digitalWrite(ledpin, LOW);
+  noTone(buzpin);
+
+  Serial.begin(9600); // Initialize serial monitor for debugging
+}
+
+int getAverageReading(int pin) {
+  long sum = 0;
+  for (int i = 0; i < sample_count; i++) {
+    sum += analogRead(pin);
+    delay(10); // Short delay between samples
+  }
+  return sum / sample_count;
+}
+
+void loop() {
+  // Read sensor values with averaging
+  flamesensvalue = getAverageReading(flamepin); // Reads averaged data from flame sensor
+  smokesensvalue = getAverageReading(smokepin); // Reads averaged data from smoke sensor
+
+  bool flameDetected = flamesensvalue <= threshold_flame; // Flame detection logic
+  bool smokeDetected = smokesensvalue >= threshold_smoke; // Smoke detection logic
+
+  // Print values to serial monitor for debugging
+  Serial.print("Flame Sensor Value: ");
+  Serial.println(flamesensvalue);
+  Serial.print("Smoke Sensor Value: ");
+  Serial.println(smokesensvalue);
+
+  if (flameDetected || smokeDetected) {
+    // If flame or smoke is detected, turn on the LED and buzzer
+    Serial.println("Alert: Hazard Detected!");
+    digitalWrite(ledpin, HIGH); // Turn on LED
+    tone(buzpin, 100);          // Turn on buzzer
+  } else {
+    // If no flame or smoke detected, turn everything off
+    Serial.println("No hazard detected.");
+    digitalWrite(ledpin, LOW);  // Turn off LED
+    noTone(buzpin);             // Turn off buzzer
+  }
+
+  delay(100); // Short delay for stability
+}
